@@ -22,3 +22,5 @@ Because we're using PAT for this trial:
 <https://docs.databricks.com/en/dev-tools/auth/pat.html>
 
 - The `.tfvars` is git ignored, check my example. To verify PAT authentication, in `main.tf` I included a sample output of my databricks current user. When you tfi & tfa `terraform init` and `terraform plan`, you will see your databricks trial account email.
+- This has 4 simple components: The `auth`, the `notebook`, the `cluster`, & the `job`. However, because of trial limitations, I had to remove cluster, utilize the out of the box serverless compute, not create a cluster, nor could I create a python nnotebook because serverless compute only works for sql.
+- Thus, I ended up going with a simple sql file ran by the `notebook.tf` setup which automatically ran the job for me shown below. Then afterward, I could destroy everything (the workspace & notebook) without deleting the job ran history. Given less trial limitations and more than an hour on a Saturday, I could have done significantly more.

@@ -10,21 +10,35 @@ variable "task_key" {
   default     = "my_tf_task"
 }
 
-resource "databricks_job" "this" {
-  name = var.job_name
-  task {
-    task_key = var.task_key
-    existing_cluster_id = databricks_cluster.this.cluster_id
-    notebook_task {
-      notebook_path = databricks_notebook.this.path
-    }
-  }
-  email_notifications {
-    on_success = [ data.databricks_current_user.me.user_name ]
-    on_failure = [ data.databricks_current_user.me.user_name ]
-  }
+variable "warehouse_id" {
+  description = "The ID of the SQL warehouse"
+  type        = string
+  default     = "8c5ef597b38c458a"
 }
 
-output "job_url" {
-  value = databricks_job.this.url
+resource "databricks_job" "this" {
+  name = var.job_name
+
+  task {
+    task_key = var.task_key
+    
+    notebook_task {
+      notebook_path = databricks_notebook.this.path
+      warehouse_id = var.warehouse_id
+    }
+  }
+
+  email_notifications {
+    on_success = [data.databricks_current_user.me.user_name]
+    on_failure = [data.databricks_current_user.me.user_name]
+  }
+
+  # Provisioner to run the job after creation
+  provisioner "local-exec" {
+    command = <<EOF
+      curl -X POST -H "Authorization: Bearer ${var.token}" \
+      ${var.host}/api/2.0/jobs/run-now \
+      -d '{"job_id": "${self.id}"}'
+    EOF
+  }
 }
