@@ -1,0 +1,2 @@
+host = "https://yourhost.databricks.com/"
+token = PAT
