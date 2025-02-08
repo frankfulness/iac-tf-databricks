@@ -2,6 +2,8 @@
 
 ## 🗃️ Documentation
 
+<https://github.com/databricks/terraform-provider-databricks>
+
 <https://docs.databricks.com/en/dev-tools/terraform/index.html#sample-configuration>
 
 ### 🔐 Databricks Terraform Authentication
